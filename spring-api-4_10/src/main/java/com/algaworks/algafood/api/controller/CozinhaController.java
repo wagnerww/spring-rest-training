@@ -64,7 +64,7 @@ public class CozinhaController {
 		@PostMapping
 		@ResponseStatus(HttpStatus.CREATED)
 		public Cozinha adicionar(@RequestBody Cozinha cozinha) {
-			return cadastroCozinha.cozinhaSalvar(cozinha);
+			return cadastroCozinha.salvar(cozinha);
 		}
 		
 		@PutMapping("/{cozinhaId}")
@@ -72,7 +72,7 @@ public class CozinhaController {
 			Cozinha cozinhaAtual = cozinhaRepository.buscar(cozinhaId);
 			if (cozinhaAtual != null) {
 				cozinhaAtual.setNome(cozinha.getNome());			
-				cozinhaRepository.salvar(cozinhaAtual);
+				cozinhaAtual = cadastroCozinha.salvar(cozinhaAtual);
 				return ResponseEntity.ok(cozinhaAtual);
 			}
 			
