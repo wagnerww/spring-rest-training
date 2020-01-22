@@ -6,54 +6,47 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.algaworks.algafood.domain.model.Cidade;
 import com.algaworks.algafood.domain.model.Cozinha;
 import com.algaworks.algafood.domain.model.Estado;
+import com.algaworks.algafood.domain.model.Permissao;
 import com.algaworks.algafood.domain.repository.CidadeRepository;
 import com.algaworks.algafood.domain.repository.CozinhaRepository;
 import com.algaworks.algafood.domain.repository.EstadoRepository;
+import com.algaworks.algafood.domain.repository.PermissaoRepository;
 
-@Repository
-public class CidadeRepositoryImpl implements CidadeRepository {
+@Component
+public class PermissaoRepositoryImpl implements PermissaoRepository {
 
 	@PersistenceContext
 	private EntityManager manager;
 	
 	@Override
-	public List<Cidade> listar(){
-		TypedQuery<Cidade> query = manager.createQuery("from Cidade", Cidade.class);
+	public List<Permissao> listar(){
+		TypedQuery<Permissao> query = manager.createQuery("from Permissao", Permissao.class);
 		
 		return query.getResultList();
 	}
 	
 	@Override
-	public Cidade buscar(Long id) {
-		return manager.find(Cidade.class, id);
+	public Permissao buscar(Long id) {
+		return manager.find(Permissao.class, id);
 	}
 	
 	@Transactional
 	@Override
-	public Cidade salvar(Cidade cidade) {
-		return manager.merge(cidade);
+	public Permissao salvar(Permissao permissao) {
+		return manager.merge(permissao);
 	}
 	
 	@Transactional
 	@Override
-	public void remover(Long id) {
-		Cidade cidade = this.buscar(id);
-		
-		if(cidade != null) {
-			manager.remove(cidade);
-			return;
-		}
-		
-		throw new EmptyResultDataAccessException(1);
-		
+	public void remover(Permissao permissao) {
+		permissao = this.buscar(permissao.getId());
+		manager.remove(permissao);
 	}
 	
 }

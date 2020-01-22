@@ -6,54 +6,49 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.algaworks.algafood.domain.model.Cidade;
 import com.algaworks.algafood.domain.model.Cozinha;
 import com.algaworks.algafood.domain.model.Estado;
+import com.algaworks.algafood.domain.model.FormaPagamento;
+import com.algaworks.algafood.domain.model.Permissao;
 import com.algaworks.algafood.domain.repository.CidadeRepository;
 import com.algaworks.algafood.domain.repository.CozinhaRepository;
 import com.algaworks.algafood.domain.repository.EstadoRepository;
+import com.algaworks.algafood.domain.repository.FormaPagamentoRepository;
+import com.algaworks.algafood.domain.repository.PermissaoRepository;
 
-@Repository
-public class CidadeRepositoryImpl implements CidadeRepository {
+@Component
+public class FormaPagamentoRepositoryImpl implements FormaPagamentoRepository {
 
 	@PersistenceContext
 	private EntityManager manager;
 	
 	@Override
-	public List<Cidade> listar(){
-		TypedQuery<Cidade> query = manager.createQuery("from Cidade", Cidade.class);
+	public List<FormaPagamento> listar(){
+		TypedQuery<FormaPagamento> query = manager.createQuery("from FormaPagamento", FormaPagamento.class);
 		
 		return query.getResultList();
 	}
 	
 	@Override
-	public Cidade buscar(Long id) {
-		return manager.find(Cidade.class, id);
+	public FormaPagamento buscar(Long id) {
+		return manager.find(FormaPagamento.class, id);
 	}
 	
 	@Transactional
 	@Override
-	public Cidade salvar(Cidade cidade) {
-		return manager.merge(cidade);
+	public FormaPagamento salvar(FormaPagamento formaPagamento) {
+		return manager.merge(formaPagamento);
 	}
 	
 	@Transactional
 	@Override
-	public void remover(Long id) {
-		Cidade cidade = this.buscar(id);
-		
-		if(cidade != null) {
-			manager.remove(cidade);
-			return;
-		}
-		
-		throw new EmptyResultDataAccessException(1);
-		
+	public void remover(FormaPagamento formaPagamento) {
+		formaPagamento = this.buscar(formaPagamento.getId());
+		manager.remove(formaPagamento);
 	}
 	
 }
