@@ -3,6 +3,7 @@ package com.algaworks.algafood.api.controller;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,16 +39,16 @@ public class RestauranteController {
 	@ResponseStatus(value = HttpStatus.OK)
 	@GetMapping
 	public List<Restaurante> listar(){
-		return restauranteRepository.listar();
+		return restauranteRepository.findAll();
 	}
 	
 	
 	@GetMapping("/{restauranteId}")
 	public ResponseEntity<Restaurante> buscar(@PathVariable Long restauranteId) {
-		Restaurante restaurante = restauranteRepository.buscar(restauranteId);
+		Optional<Restaurante> restaurante = restauranteRepository.findById(restauranteId);
 		
-		if(restaurante != null) {
-			return ResponseEntity.ok(restaurante);
+		if(restaurante.isPresent()) {
+			return ResponseEntity.ok(restaurante.get());
 		}
 		
 		return ResponseEntity.notFound().build();
@@ -68,9 +69,10 @@ public class RestauranteController {
 	@PutMapping("/{restauranteId}")
 	public ResponseEntity<?> atualizar(@PathVariable Long restauranteId, @RequestBody Restaurante restaurante){
 		try {
-			Restaurante restauranteAtual = restauranteRepository.buscar(restauranteId);
+			Optional<Restaurante> restauranteAtualObj = restauranteRepository.findById(restauranteId);
 			
-			if(restauranteAtual!=null) {
+			if(restauranteAtualObj.isPresent()) {
+				Restaurante restauranteAtual = restauranteAtualObj.get();
 				restauranteAtual.setNome(restaurante.getNome());
 				restauranteAtual.setCozinha(restaurante.getCozinha());
 				
@@ -87,12 +89,13 @@ public class RestauranteController {
 	
 	@PatchMapping("/{restauranteId}")
 	public ResponseEntity<?> atualizarParcial(@PathVariable Long restauranteId, @RequestBody Map<String, Object> campos){
-		Restaurante restauranteAtual = restauranteRepository.buscar(restauranteId);
+		Optional<Restaurante> restauranteAtualObj = restauranteRepository.findById(restauranteId);
 		
-		if(restauranteAtual == null) {
+		if(!restauranteAtualObj.isPresent()) {
 			return ResponseEntity.notFound().build();
 		}
 		
+		Restaurante restauranteAtual = restauranteAtualObj.get();
 		merge(campos, restauranteAtual);
 		
 		return this.atualizar(restauranteId, restauranteAtual);

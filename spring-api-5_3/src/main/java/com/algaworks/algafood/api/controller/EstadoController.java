@@ -1,6 +1,7 @@
 package com.algaworks.algafood.api.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,15 +34,15 @@ public class EstadoController {
 	
 	@GetMapping
 	public List<Estado> listar(){
-		return estadoRepository.listar();
+		return estadoRepository.findAll();
 	}
 	
 	@GetMapping("/{estadoId}")
 	public ResponseEntity<Estado> buscar(@PathVariable Long estadoId){
-		Estado estado = estadoRepository.buscar(estadoId);
+		Optional<Estado> estado = estadoRepository.findById(estadoId);
 		
-		if(estado != null) {
-			return ResponseEntity.ok(estado);
+		if(estado.isPresent()) {
+			return ResponseEntity.ok(estado.get());
 		}
 		
 		return ResponseEntity.notFound().build();
@@ -55,10 +56,12 @@ public class EstadoController {
 	
 	@PutMapping("/{estadoId}")
 	public ResponseEntity<Estado> atualizar(@PathVariable Long estadoId, @RequestBody Estado estado){
-		Estado estadoAtual = estadoRepository.buscar(estadoId);
+		Optional<Estado> estadoAtualObj = estadoRepository.findById(estadoId);
 		
-		if(estadoAtual!=null) {
+		if(estadoAtualObj.isPresent()) {
+			Estado estadoAtual = estadoAtualObj.get();
 			estadoAtual.setNome(estado.getNome());
+			cadastroEstado.salvar(estadoAtual);
 			return ResponseEntity.ok(estadoAtual);
 		}
 		
@@ -66,7 +69,7 @@ public class EstadoController {
 	}
 	
 	@DeleteMapping("/{estadoId}")
-	public ResponseEntity<Estado> remover(@PathVariable Long estadoId){
+	public ResponseEntity<?> remover(@PathVariable Long estadoId){
 		try {
 			
 			cadastroEstado.excluir(estadoId);
@@ -74,10 +77,10 @@ public class EstadoController {
 
 			
 		} catch (EntidadeNaoEncontradaException e) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 			
 		} catch (EntidadeEmUsoException e) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).build();
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
 			
 		}
 	}
