@@ -13,7 +13,6 @@ import org.springframework.util.StringUtils;
 
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.repository.RestauranteRepositoryQueries;
-import com.ctc.wstx.util.StringUtil;
 
 @Repository
 public class RestauranteRepositoryImpl implements RestauranteRepositoryQueries {
