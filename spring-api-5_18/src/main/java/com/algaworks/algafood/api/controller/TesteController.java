@@ -77,4 +77,10 @@ public class TesteController {
 		
 	}
 	
+	@GetMapping("/restaurantes/primeiro")
+	public Optional<Restaurante> restaurantePrimeiro(String nome){		
+		return restauranteRepository.buscarPrimeiro();
+		
+	}
+	
 }
