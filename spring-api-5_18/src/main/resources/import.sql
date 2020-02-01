@@ -13,5 +13,7 @@ insert into cidade (nome, estado_id) values ('Pomerode', 2);
 insert into permissao (nome, descricao) values ('ADM', 'Pode de tudo');
 insert into permissao (nome, descricao) values ('Suporte', 'Somente da suporte');
 
-insert into forma_pagamento (descricao) values ('A Vista');
-insert into forma_pagamento (descricao) values ('A Prazo');
+insert into forma_pagamento (id,descricao) values (1, 'A Vista');
+insert into forma_pagamento (id,descricao) values (2, 'A Prazo');
+
+insert into restautante_forma_pagamento (restaurante_id, forma_pagamento_id) values (1, 1), (1, 2), (2, 2);
