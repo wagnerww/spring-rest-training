@@ -1,7 +1,6 @@
 package com.algaworks.algafood.api.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,8 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.algaworks.algafood.domain.exception.EntidadeEmUsoException;
-import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
+import com.algaworks.algafood.domain.exception.EstadoNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.model.Cidade;
 import com.algaworks.algafood.domain.repository.CidadeRepository;
@@ -51,25 +49,26 @@ public class CidadeController {
 			
 			return ResponseEntity.status(HttpStatus.CREATED).body(cidade);
 			
-		} catch (EntidadeNaoEncontradaException e) {
-			throw new NegocioException(e.getMessage());
+		} catch (EstadoNaoEncontradaException e) {
+			throw new NegocioException(e.getMessage(), e);
 		}
 		
 	}
 	
 	@PutMapping("/{cidadeId}")
-	public ResponseEntity<?> atualizar(@PathVariable Long cidadeId, @RequestBody Cidade cidade){		
-		Cidade cidadeAtual = cadastroCidade.buscarOutFalhar(cidadeId);
-	
-		cidadeAtual.setNome(cidade.getNome());
-		cidadeAtual.setEstado(cidade.getEstado());
-	
+	public ResponseEntity<?> atualizar(@PathVariable Long cidadeId, @RequestBody Cidade cidade){
 		try {
+			Cidade cidadeAtual = cadastroCidade.buscarOutFalhar(cidadeId);
+		
+			cidadeAtual.setNome(cidade.getNome());
+			cidadeAtual.setEstado(cidade.getEstado());
+		
+		
 			cadastroCidade.salvar(cidadeAtual);
 			return ResponseEntity.ok(cidadeAtual);
 			
-		} catch (EntidadeNaoEncontradaException e) {
-			throw new NegocioException(e.getMessage());
+		} catch (EstadoNaoEncontradaException e) {
+			throw new NegocioException(e.getMessage(), e);
 		}
 		
 	}
