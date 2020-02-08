@@ -39,14 +39,8 @@ public class CidadeController {
 	}
 	
 	@GetMapping("/{cidadeId}")
-	public ResponseEntity<Cidade> buscar(@PathVariable Long cidadeId){
-		Optional<Cidade> cidade = cidadeRepository.findById(cidadeId);
-		
-		if(cidade.isPresent()) {
-			return ResponseEntity.ok(cidade.get());
-		}
-		
-		return ResponseEntity.notFound().build();
+	public Cidade buscar(@PathVariable Long cidadeId){
+		return cadastroCidade.buscarOutFalhar(cidadeId);
 	}
 	
 	@PostMapping
@@ -63,38 +57,19 @@ public class CidadeController {
 	}
 	
 	@PutMapping("/{cidadeId}")
-	public ResponseEntity<?> atualizar(@PathVariable Long cidadeId, @RequestBody Cidade cidade){
-		try {
-			Optional<Cidade> cidadeAtualObj = cidadeRepository.findById(cidadeId);
-			
-			if(cidadeAtualObj.isPresent()) {
-				Cidade cidadeAtual = cidadeAtualObj.get();
-				cidadeAtual.setNome(cidade.getNome());
-				cidadeAtual.setEstado(cidade.getEstado());
-				
-				cadastroCidade.salvar(cidadeAtual);
-				return ResponseEntity.ok(cidadeAtual);
-			}
-			
-			return ResponseEntity.notFound().build();
-			
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
+	public ResponseEntity<?> atualizar(@PathVariable Long cidadeId, @RequestBody Cidade cidade){		
+		Cidade cidadeAtual = cadastroCidade.buscarOutFalhar(cidadeId);
+	
+		cidadeAtual.setNome(cidade.getNome());
+		cidadeAtual.setEstado(cidade.getEstado());
+		
+		cadastroCidade.salvar(cidadeAtual);
+		return ResponseEntity.ok(cidadeAtual);
+		
 	}
 	
 	@DeleteMapping("/{cidadeId}")
-	public ResponseEntity<?> remover(@PathVariable Long cidadeId){
-		try {
-			cadastroCidade.excluir(cidadeId);
-			return ResponseEntity.noContent().build();
-			
-		} catch (EntidadeEmUsoException e) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-			
-		} catch (EntidadeNaoEncontradaException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-			
-		}
+	public void remover(@PathVariable Long cidadeId){
+		cadastroCidade.excluir(cidadeId);		
 	}
 }
