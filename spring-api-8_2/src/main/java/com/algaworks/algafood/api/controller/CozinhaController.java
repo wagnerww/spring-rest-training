@@ -49,17 +49,8 @@ public class CozinhaController {
 		
 		
 		@GetMapping("/{cozinhaId}")
-		public ResponseEntity<Cozinha> buscar(@PathVariable Long cozinhaId) {
-			Optional<Cozinha> cozinha = cozinhaRepository.findById(cozinhaId);
-			// return ResponseEntity.status(HttpStatus.OK).body(cozinha);
-			
-			if(cozinha.isPresent()) {
-				return ResponseEntity.ok(cozinha.get());
-			}
-			
-			//return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-			return ResponseEntity.notFound().build();
-			
+		public Cozinha buscar(@PathVariable Long cozinhaId) {
+			return cadastroCozinha.buscarOuFalhar(cozinhaId);						
 		}
 		
 		@PostMapping
@@ -69,34 +60,13 @@ public class CozinhaController {
 		}
 		
 		@PutMapping("/{cozinhaId}")
-		public ResponseEntity<Cozinha> atualizar(@PathVariable Long cozinhaId, @RequestBody Cozinha cozinha){
-			Optional<Cozinha> cozinhaAtualObj = cozinhaRepository.findById(cozinhaId);
-			if (cozinhaAtualObj.isPresent()) {
-				Cozinha cozinhaAtual = cozinhaAtualObj.get();
-				cozinhaAtual.setNome(cozinha.getNome());
-				cozinhaAtual = cadastroCozinha.salvar(cozinhaAtual);
-				return ResponseEntity.ok(cozinhaAtual);
-			}
+		public Cozinha atualizar(@PathVariable Long cozinhaId, @RequestBody Cozinha cozinha){
+			Cozinha cozinhaAtual = cadastroCozinha.buscarOuFalhar(cozinhaId);			
 			
-			return ResponseEntity.notFound().build();
+			cozinhaAtual.setNome(cozinha.getNome());
+			return cadastroCozinha.salvar(cozinhaAtual);
+			
 		}
-		
-		/* @DeleteMapping("/{cozinhaId}")
-		public ResponseEntity<?> remover(@PathVariable Long cozinhaId) {
-			
-			try {
-				cadastroCozinha.excluir(cozinhaId);			
-				return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-				
-			 } catch (EntidadeEmUsoException e) {
-				return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-				
-			} catch(EntidadeNaoEncontradaException e) {
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-			}
-			
-			
-		} */
 		
 		@DeleteMapping("/{cozinhaId}")
 		@ResponseStatus(HttpStatus.NO_CONTENT)
