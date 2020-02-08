@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.algaworks.algafood.domain.exception.EntidadeEmUsoException;
 import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
+import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.model.Cidade;
 import com.algaworks.algafood.domain.repository.CidadeRepository;
 import com.algaworks.algafood.domain.service.CadastroCidadeService;
@@ -51,7 +52,7 @@ public class CidadeController {
 			return ResponseEntity.status(HttpStatus.CREATED).body(cidade);
 			
 		} catch (EntidadeNaoEncontradaException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
+			throw new NegocioException(e.getMessage());
 		}
 		
 	}
@@ -62,9 +63,14 @@ public class CidadeController {
 	
 		cidadeAtual.setNome(cidade.getNome());
 		cidadeAtual.setEstado(cidade.getEstado());
-		
-		cadastroCidade.salvar(cidadeAtual);
-		return ResponseEntity.ok(cidadeAtual);
+	
+		try {
+			cadastroCidade.salvar(cidadeAtual);
+			return ResponseEntity.ok(cidadeAtual);
+			
+		} catch (EntidadeNaoEncontradaException e) {
+			throw new NegocioException(e.getMessage());
+		}
 		
 	}
 	

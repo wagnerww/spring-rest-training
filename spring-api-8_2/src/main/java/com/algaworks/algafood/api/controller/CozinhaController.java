@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.algaworks.algafood.api.model.CozinhasXmlWrapper;
 import com.algaworks.algafood.domain.exception.EntidadeEmUsoException;
 import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
+import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.model.Cozinha;
 import com.algaworks.algafood.domain.repository.CozinhaRepository;
 import com.algaworks.algafood.domain.service.CadastroCozinhaService;
@@ -64,7 +65,12 @@ public class CozinhaController {
 			Cozinha cozinhaAtual = cadastroCozinha.buscarOuFalhar(cozinhaId);			
 			
 			cozinhaAtual.setNome(cozinha.getNome());
-			return cadastroCozinha.salvar(cozinhaAtual);
+			try {
+				return cadastroCozinha.salvar(cozinhaAtual);
+			} catch (Exception e) {
+				throw new NegocioException(e.getMessage());
+			}
+			
 			
 		}
 		
