@@ -37,6 +37,7 @@ public class Cozinha {
 	
 	// @JsonIgnore
 	//@JsonProperty(value = "titulo")
+	@NotNull()
 	@Column(name="nome", nullable = false)	
 	private String nome;
 	
