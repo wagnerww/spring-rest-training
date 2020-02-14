@@ -2,8 +2,6 @@ package com.algaworks.algafood;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 
-import org.flywaydb.core.Flyway;
-import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,7 +48,7 @@ public class APICadastroCozinhaIT {
     RestAssured.port = port;
     RestAssured.basePath = "/cozinhas";
 
-    jsonCorretoCozinhaChinesa = ResourceUtils.getContentFromResource("/json/cozinha-chinesa.json");
+    jsonCorretoCozinhaChinesa = ResourceUtils.getContentFromResource("/json/correto/cozinha-chinesa.json");
 
     dataBaseCleaner.clearTables();
     prepararDados();
