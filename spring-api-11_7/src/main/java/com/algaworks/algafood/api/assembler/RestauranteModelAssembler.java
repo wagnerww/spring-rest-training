@@ -11,6 +11,7 @@ import com.algaworks.algafood.domain.model.Restaurante;
 
 @Component
 public class RestauranteModelAssembler {
+    
   public RestauranteModel toModel(Restaurante restaurante) {
     CozinhaModel cozinhaModel = new CozinhaModel();
     cozinhaModel.setId(restaurante.getCozinha().getId());
