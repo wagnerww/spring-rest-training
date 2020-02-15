@@ -15,6 +15,6 @@ public class RestauranteModel {
 
   private BigDecimal taxaFrete;
 
-  private CozinhaModel cozinhaId;
+  private CozinhaModel cozinha;
 
 }
