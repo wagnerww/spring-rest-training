@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.algaworks.algafood.Groups;
+import com.algaworks.algafood.api.assembler.RestauranteInputDisassembler;
+import com.algaworks.algafood.api.assembler.RestauranteModelAssembler;
 import com.algaworks.algafood.api.model.CozinhaModel;
 import com.algaworks.algafood.api.model.RestauranteModel;
 import com.algaworks.algafood.api.model.input.RestauranteInput;
@@ -51,11 +53,17 @@ public class RestauranteController {
   @Autowired
   private CadastroRestauranteService cadastroRestaurante;
 
+  @Autowired
+  private RestauranteModelAssembler RestauranteModelAssembler;
+
+  @Autowired
+  private RestauranteInputDisassembler restauranteInputDisassembler;
+
   @ResponseStatus(value = HttpStatus.OK)
 
   @GetMapping
   public List<RestauranteModel> listar() {
-    return toCollectionModel(restauranteRepository.findAll());
+    return RestauranteModelAssembler.toCollectionModel(restauranteRepository.findAll());
   }
 
   @GetMapping("/{restauranteId}")
@@ -63,15 +71,16 @@ public class RestauranteController {
 
     Restaurante restaurante = cadastroRestaurante.buscarOuFalhar(restauranteId);
 
-    return toModel(restaurante);
+    return RestauranteModelAssembler.toModel(restaurante);
   }
 
   @PostMapping
   public ResponseEntity<RestauranteModel> adicionar(@RequestBody @Valid RestauranteInput restauranteInput) {
     try {
-      Restaurante restaurante = toDomainObject(restauranteInput);
+      Restaurante restaurante = restauranteInputDisassembler.toDomainObject(restauranteInput);
 
-      return ResponseEntity.status(HttpStatus.CREATED).body(toModel(cadastroRestaurante.salvar(restaurante)));
+      return ResponseEntity.status(HttpStatus.CREATED)
+          .body(RestauranteModelAssembler.toModel(cadastroRestaurante.salvar(restaurante)));
 
     } catch (CozinhaNaoEncontradaException e) {
       throw new NegocioException(e.getMessage(), e);
@@ -82,7 +91,7 @@ public class RestauranteController {
   public ResponseEntity<RestauranteModel> atualizar(@PathVariable Long restauranteId,
       @RequestBody @Valid RestauranteInput restauranteInput) {
 
-    Restaurante restaurante = toDomainObject(restauranteInput);
+    Restaurante restaurante = restauranteInputDisassembler.toDomainObject(restauranteInput);
 
     Restaurante restauranteAtual = cadastroRestaurante.buscarOuFalhar(restauranteId);
 
@@ -91,7 +100,7 @@ public class RestauranteController {
 
     try {
       cadastroRestaurante.salvar(restauranteAtual);
-      return ResponseEntity.ok(toModel(restauranteAtual));
+      return ResponseEntity.ok(RestauranteModelAssembler.toModel(restauranteAtual));
     } catch (CozinhaNaoEncontradaException e) {
       throw new NegocioException(e.getMessage(), e);
     }
@@ -139,36 +148,6 @@ public class RestauranteController {
       Throwable rootCause = ExceptionUtils.getRootCause(e);
       throw new HttpMessageNotReadableException(e.getMessage(), rootCause, serverHttpRequest);
     }
-  }
-
-  private RestauranteModel toModel(Restaurante restaurante) {
-    CozinhaModel cozinhaModel = new CozinhaModel();
-    cozinhaModel.setId(restaurante.getCozinha().getId());
-    cozinhaModel.setNome(restaurante.getCozinha().getNome());
-
-    RestauranteModel restauranteModel = new RestauranteModel();
-    restauranteModel.setId(restaurante.getId());
-    restauranteModel.setNome(restaurante.getNome());
-    restauranteModel.setTaxaFrete(restaurante.getTaxaFrete());
-    restauranteModel.setCozinha(cozinhaModel);
-    return restauranteModel;
-  }
-
-  private List<RestauranteModel> toCollectionModel(List<Restaurante> restaurantes) {
-    return restaurantes.stream().map(restaurante -> toModel(restaurante)).collect(Collectors.toList());
-  }
-
-  private Restaurante toDomainObject(RestauranteInput restauranteInput) {
-    Restaurante restaurante = new Restaurante();
-    restaurante.setNome(restauranteInput.getNome());
-    restaurante.setTaxaFrete(restauranteInput.getTaxaFrete());
-
-    Cozinha cozinha = new Cozinha();
-    cozinha.setId(restauranteInput.getCozinha().getId());
-
-    restaurante.setCozinha(cozinha);
-
-    return restaurante;
   }
 
 }
