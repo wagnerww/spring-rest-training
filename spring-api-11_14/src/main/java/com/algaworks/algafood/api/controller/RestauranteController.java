@@ -91,12 +91,14 @@ public class RestauranteController {
   public ResponseEntity<RestauranteModel> atualizar(@PathVariable Long restauranteId,
       @RequestBody @Valid RestauranteInput restauranteInput) {
 
-    Restaurante restaurante = restauranteInputDisassembler.toDomainObject(restauranteInput);
+    // Restaurante restaurante = restauranteInputDisassembler.toDomainObject(restauranteInput);
 
     Restaurante restauranteAtual = cadastroRestaurante.buscarOuFalhar(restauranteId);
+    
+    restauranteInputDisassembler.copyToDomainObject(restauranteInput, restauranteAtual);
 
-    restauranteAtual.setNome(restaurante.getNome());
-    restauranteAtual.setCozinha(restaurante.getCozinha());
+/*    restauranteAtual.setNome(restaurante.getNome());
+    restauranteAtual.setCozinha(restaurante.getCozinha()); */
 
     try {
       cadastroRestaurante.salvar(restauranteAtual);
