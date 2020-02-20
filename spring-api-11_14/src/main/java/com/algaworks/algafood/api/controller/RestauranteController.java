@@ -18,6 +18,7 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -91,14 +92,17 @@ public class RestauranteController {
   public ResponseEntity<RestauranteModel> atualizar(@PathVariable Long restauranteId,
       @RequestBody @Valid RestauranteInput restauranteInput) {
 
-    // Restaurante restaurante = restauranteInputDisassembler.toDomainObject(restauranteInput);
+    // Restaurante restaurante =
+    // restauranteInputDisassembler.toDomainObject(restauranteInput);
 
     Restaurante restauranteAtual = cadastroRestaurante.buscarOuFalhar(restauranteId);
-    
+
     restauranteInputDisassembler.copyToDomainObject(restauranteInput, restauranteAtual);
 
-/*    restauranteAtual.setNome(restaurante.getNome());
-    restauranteAtual.setCozinha(restaurante.getCozinha()); */
+    /*
+     * restauranteAtual.setNome(restaurante.getNome());
+     * restauranteAtual.setCozinha(restaurante.getCozinha());
+     */
 
     try {
       cadastroRestaurante.salvar(restauranteAtual);
@@ -150,6 +154,18 @@ public class RestauranteController {
       Throwable rootCause = ExceptionUtils.getRootCause(e);
       throw new HttpMessageNotReadableException(e.getMessage(), rootCause, serverHttpRequest);
     }
+  }
+
+  @PutMapping("/{restauranteId}/ativar")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void ativar(@PathVariable("restauranteId") Long restauranteId) {
+    cadastroRestaurante.ativar(restauranteId);
+  }
+
+  @DeleteMapping("/{restauranteId}/inativar")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void inativar(@PathVariable("restauranteId") Long restauranteId) {
+    cadastroRestaurante.inativar(restauranteId);
   }
 
 }

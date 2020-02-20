@@ -29,6 +29,11 @@ public class CadastroCozinhaService {
 	public void excluir(Long cozinhaId) {
 		try {
 			cozinhaReposity.deleteById(cozinhaId);
+			//EXECUTA AS INSTRUÇÕES DO REPOSITÓRIO
+			// isso foi feito, por que o @transactional está no método, e o commit
+			// ou qunado a transação é encerrada, e aí é executado "commit"o problema
+			// é que já pasou do try-catch.
+			cozinhaReposity.flush();
 		
 		} catch(EmptyResultDataAccessException e) {
 			throw new CozinhaNaoEncontradaException(cozinhaId);

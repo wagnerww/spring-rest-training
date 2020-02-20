@@ -48,6 +48,7 @@ public class EstadoController {
 
   @GetMapping("/{estadoId}")
   public ResponseEntity<EstadoModel> buscar(@PathVariable Long estadoId) {
+
     return new ResponseEntity<>(estadoModelAssembler.toModel(cadastroEstado.buscarOuFalhar(estadoId)), HttpStatus.OK);
   }
 

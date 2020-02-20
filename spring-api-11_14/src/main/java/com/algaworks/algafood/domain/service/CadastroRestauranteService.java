@@ -14,28 +14,45 @@ import com.algaworks.algafood.domain.repository.RestauranteRepository;
 
 @Service
 public class CadastroRestauranteService {
-		
-	@Autowired
-	private CozinhaRepository cozinhaRepository;
-	
-	@Autowired
-	private RestauranteRepository restauranteRepository;
-	
-	@Transactional
-	public Restaurante salvar(Restaurante restaurante) {
-		Long cozinhaId = restaurante.getCozinha().getId();
-		
-		Cozinha cozinha = cozinhaRepository.findById(cozinhaId).orElseThrow(() -> new CozinhaNaoEncontradaException(cozinhaId));
-		
-		restaurante.setCozinha(cozinha);
-		return restauranteRepository.save(restaurante);
-	}
-	
-	@Transactional
-	public Restaurante buscarOuFalhar(Long restauranteId) {
-		return restauranteRepository.findById(restauranteId)
-				.orElseThrow(() -> new RestauranteNaoEncontradaException(restauranteId));
 
-	}
-	
+  @Autowired
+  private CozinhaRepository cozinhaRepository;
+
+  @Autowired
+  private RestauranteRepository restauranteRepository;
+
+  @Transactional
+  public Restaurante salvar(Restaurante restaurante) {
+    Long cozinhaId = restaurante.getCozinha().getId();
+
+    Cozinha cozinha = cozinhaRepository.findById(cozinhaId)
+        .orElseThrow(() -> new CozinhaNaoEncontradaException(cozinhaId));
+
+    restaurante.setCozinha(cozinha);
+    return restauranteRepository.save(restaurante);
+  }
+
+  @Transactional
+  public Restaurante buscarOuFalhar(Long restauranteId) {
+    return restauranteRepository.findById(restauranteId)
+        .orElseThrow(() -> new RestauranteNaoEncontradaException(restauranteId));
+
+  }
+
+  @Transactional
+  public void ativar(Long restauranteId) {
+    Restaurante restaurante = this.buscarOuFalhar(restauranteId);
+
+    restaurante.ativar();
+
+  }
+
+  @Transactional
+  public void inativar(Long restauranteId) {
+    Restaurante restaurante = this.buscarOuFalhar(restauranteId);
+
+    restaurante.inativar();
+
+  }
+
 }
