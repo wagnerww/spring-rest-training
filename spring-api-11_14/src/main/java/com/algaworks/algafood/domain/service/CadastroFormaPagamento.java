@@ -7,10 +7,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import com.algaworks.algafood.api.assembler.FormaPagamentoDisassembler;
-import com.algaworks.algafood.api.assembler.FormaPagamentoModelAssembler;
-import com.algaworks.algafood.api.model.FormaPagamentoModel;
-import com.algaworks.algafood.api.model.input.FormaPagamentoInput;
 import com.algaworks.algafood.domain.exception.EntidadeEmUsoException;
 import com.algaworks.algafood.domain.exception.FormaPagamentoNaoEncontrada;
 import com.algaworks.algafood.domain.model.FormaPagamento;
@@ -24,12 +20,6 @@ public class CadastroFormaPagamento {
   @Autowired
   private FormaPagamentoRepository formaPagamentoRepository;
 
-  @Autowired
-  private FormaPagamentoModelAssembler formaPagamentoModelAssembler;
-
-  @Autowired
-  private FormaPagamentoDisassembler formaPagamentoDisassembler;
-
   public List<FormaPagamento> buscarTodos() {
     return formaPagamentoRepository.findAll();
   }
@@ -41,15 +31,6 @@ public class CadastroFormaPagamento {
 
   public FormaPagamento salvar(FormaPagamento formaPagamento) {
     return formaPagamentoRepository.save(formaPagamento);
-  }
-
-  public FormaPagamentoModel editar(Long formaPagamentoId, FormaPagamentoInput formaPagamentoInput) {
-    FormaPagamento formaPagamentoAtual = this.buscarForma(formaPagamentoId);
-
-    formaPagamentoDisassembler.copyDomainObject(formaPagamentoInput, formaPagamentoAtual);
-
-    return formaPagamentoModelAssembler.toModel(this.salvar(formaPagamentoAtual));
-
   }
 
   public void excluir(Long formaPagamentoId) {
