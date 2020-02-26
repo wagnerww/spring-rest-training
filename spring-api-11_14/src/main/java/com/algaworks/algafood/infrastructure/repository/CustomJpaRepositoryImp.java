@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import javax.persistence.EntityManager;
 
+import org.apache.catalina.Manager;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 
@@ -28,5 +29,11 @@ public class CustomJpaRepositoryImp<T, ID> extends SimpleJpaRepository<T, ID> im
 		return Optional.ofNullable(entity);
 		
 	}
+
+  @Override
+  public void detach(T entity) {
+    entityManager.detach(entity);
+    
+  }
 	
 }

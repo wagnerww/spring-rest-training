@@ -1,6 +1,7 @@
 package com.algaworks.algafood.domain.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -31,8 +32,22 @@ public class CadastroUsuarioService {
   }
 
   public Usuario salvar(Usuario usuario) {
+
+    // Isso foi feito de forma customizada em CustomRepository
+    // por que o jpa já sincroniza os dados quando faz o set, então ele já diz que
+    // existe um email
+    // e com o detach do entiti manager ele não faz essa sincronização
+    usuarioRepository.detach(usuario);
+
+    Optional<Usuario> usuarioExistente = usuarioRepository.findByEmail(usuario.getEmail());
+
+    if (usuarioExistente.isPresent() && !usuarioExistente.get().equals(usuario)) {
+      throw new NegocioException(
+          String.format("Já existe um usuário cadastrado com este email %s", usuario.getEmail()));
+    }
+
     return usuarioRepository.save(usuario);
-  } 
+  }
 
   public void excluir(Long usuarioId) {
     try {
@@ -45,15 +60,15 @@ public class CadastroUsuarioService {
       throw new EntidadeEmUsoException(String.format(MSG_USUARIO, usuarioId));
     }
   }
-  
+
   @Transactional
   public void alterarSenha(Long usuarioId, String senhaAtual, String novaSenha) {
     Usuario usuario = this.buscarOuFalhar(usuarioId);
-    
+
     if (usuario.senhaNaoCoincideCom(senhaAtual)) {
       throw new NegocioException("Senha atual informada não coincide com a senha do usuário.");
     }
-    
+
     usuario.setSenha(novaSenha);
   }
 
