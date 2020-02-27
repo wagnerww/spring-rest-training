@@ -28,5 +28,5 @@ public class RestauranteInput {
   @Valid
   @NotNull
   private EnderecoInput endereco;
-
+  
 }
