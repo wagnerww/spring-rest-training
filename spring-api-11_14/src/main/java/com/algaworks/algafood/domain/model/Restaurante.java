@@ -81,7 +81,7 @@ public class Restaurante {
 
   @JsonIgnore
   @OneToMany(mappedBy = "restaurante")
-  private List<Produto> produtos = new ArrayList<>();
+  private Set<Produto> produtos = new HashSet<>();
 
   private Boolean ativo = Boolean.TRUE;
 

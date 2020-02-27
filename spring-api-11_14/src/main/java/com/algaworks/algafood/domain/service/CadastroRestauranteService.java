@@ -10,6 +10,7 @@ import com.algaworks.algafood.domain.exception.RestauranteNaoEncontradaException
 import com.algaworks.algafood.domain.model.Cidade;
 import com.algaworks.algafood.domain.model.Cozinha;
 import com.algaworks.algafood.domain.model.FormaPagamento;
+import com.algaworks.algafood.domain.model.Produto;
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.repository.CozinhaRepository;
 import com.algaworks.algafood.domain.repository.RestauranteRepository;
@@ -28,6 +29,9 @@ public class CadastroRestauranteService {
 
   @Autowired
   private CadastroFormaPagamento cadastroFormaPagamento;
+
+  @Autowired
+  private CadastroProdutoService cadastroProdutoService;
 
   @Transactional
   public Restaurante salvar(Restaurante restaurante) {
@@ -70,16 +74,32 @@ public class CadastroRestauranteService {
   public void removerFormaPagamento(Long restauranteId, Long formaPagamentoId) {
     Restaurante restaurante = buscarOuFalhar(restauranteId);
     FormaPagamento formaPagamento = cadastroFormaPagamento.buscarForma(formaPagamentoId);
-    
+
     restaurante.getFormasPagamento().remove(formaPagamento);
   }
-  
+
   @Transactional
   public void adicionarFormaPagamento(Long restauranteId, Long formaPagamentoId) {
     Restaurante restaurante = buscarOuFalhar(restauranteId);
     FormaPagamento formaPagamento = cadastroFormaPagamento.buscarForma(formaPagamentoId);
-    
+
     restaurante.getFormasPagamento().add(formaPagamento);
+  }
+
+  @Transactional
+  public void removerProduto(Long restauranteId, Long produtoId) {
+    Restaurante restaurante = buscarOuFalhar(restauranteId);
+    Produto produto = cadastroProdutoService.buscarOuFalhar(restauranteId, produtoId);
+
+    restaurante.getProdutos().remove(produto);
+  }
+
+  @Transactional
+  public void adicionarProduto(Long restauranteId, Long produtoId) {
+    Restaurante restaurante = buscarOuFalhar(restauranteId);
+    Produto produto = cadastroProdutoService.buscarOuFalhar(restauranteId, produtoId);
+
+    restaurante.getProdutos().add(produto);
   }
 
 }
