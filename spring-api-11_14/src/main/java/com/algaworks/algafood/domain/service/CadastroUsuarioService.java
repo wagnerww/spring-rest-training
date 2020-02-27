@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.algaworks.algafood.domain.exception.EntidadeEmUsoException;
 import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.exception.UsuarioNaoEncontradaException;
+import com.algaworks.algafood.domain.model.Grupo;
 import com.algaworks.algafood.domain.model.Usuario;
 import com.algaworks.algafood.domain.repository.UsuarioRepository;
 
@@ -22,6 +23,9 @@ public class CadastroUsuarioService {
 
   @Autowired
   UsuarioRepository usuarioRepository;
+
+  @Autowired
+  CadastroGrupoService cadastroGrupoService;
 
   public List<Usuario> listar() {
     return usuarioRepository.findAll();
@@ -70,6 +74,22 @@ public class CadastroUsuarioService {
     }
 
     usuario.setSenha(novaSenha);
+  }
+
+  @Transactional
+  public void desassociarGrupo(Long usuarioId, Long grupoId) {
+    Usuario usuario = buscarOuFalhar(usuarioId);
+    Grupo grupo = cadastroGrupoService.buscarOutFalhar(grupoId);
+
+    usuario.getGrupos().remove(grupo);
+  }
+
+  @Transactional
+  public void associarGrupo(Long usuarioId, Long grupoId) {
+    Usuario usuario = buscarOuFalhar(usuarioId);
+    Grupo grupo = cadastroGrupoService.buscarOutFalhar(grupoId);
+
+    usuario.getGrupos().add(grupo);
   }
 
 }
