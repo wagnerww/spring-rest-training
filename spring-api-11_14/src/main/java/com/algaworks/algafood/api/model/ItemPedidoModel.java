@@ -12,7 +12,7 @@ public class ItemPedidoModel {
   private Long produtoId;
   private String produtoNome;
   private Integer quantidade;
-  private BigDecimal precoUnitario;
+  private BigDecimal valor;
   private BigDecimal precoTotal;
   private String observacao;
 

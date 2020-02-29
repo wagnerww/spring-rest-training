@@ -16,7 +16,7 @@ public class CadastroPedidoService {
   PedidoRepository pedidoRepository;
 
   public List<Pedido> listar() {
-    return pedidoRepository.findAll();
+    return pedidoRepository.findAllCustom();
   }
 
   public Pedido buscar(Long pedidoId) {
