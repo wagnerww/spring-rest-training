@@ -37,13 +37,13 @@ public class UsuarioGrupoController {
   @DeleteMapping("/{grupoId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void desassociar(@PathVariable Long usuarioId, @PathVariable Long grupoId) {
-    cadastroUsuarioService.desassociarPermissao(usuarioId, grupoId);
+    cadastroUsuarioService.desassociarGrupo(usuarioId, grupoId);
   }
 
   @PutMapping("/{grupoId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void associar(@PathVariable Long usuarioId, @PathVariable Long grupoId) {
-    cadastroUsuarioService.associarPermissao(usuarioId, grupoId);
+    cadastroUsuarioService.associarGrupo(usuarioId, grupoId);
   }
 
 }
