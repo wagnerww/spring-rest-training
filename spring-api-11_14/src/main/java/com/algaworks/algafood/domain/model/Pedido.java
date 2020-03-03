@@ -3,9 +3,9 @@ package com.algaworks.algafood.domain.model;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -19,7 +19,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import org.apache.catalina.User;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -49,9 +48,6 @@ public class Pedido {
   @Column(nullable = false)
   private BigDecimal valorTotal;
 
-  @Column(nullable = false)
-  private OffsetDateTime dataCriacao;
-
   @Column
   private OffsetDateTime dataCancelamento;
 
@@ -73,15 +69,24 @@ public class Pedido {
   @JoinColumn(name = "forma_pagamento_id", nullable = false)
   private FormaPagamento formaPagamento;
 
-  @OneToMany(mappedBy = "pedido", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
   private List<ItemPedido> itensPedido = new ArrayList<>();
 
-  @CreationTimestamp()
+  @CreationTimestamp
   @Column(nullable = false, columnDefinition = "datetime")
   private OffsetDateTime dataCadastro;
 
   @UpdateTimestamp
   @Column(nullable = false, columnDefinition = "datetime")
   private OffsetDateTime dataAtualizacao;
+
+  public void calcularValorTotal() {
+    getItensPedido().forEach(ItemPedido::calcularPrecoTotal);
+
+    this.subTotal = getItensPedido().stream().map(item -> item.getPrecoTotal()).reduce(BigDecimal.ZERO,
+        BigDecimal::add);
+
+    this.valorTotal = this.subTotal.add(this.taxaFrete);
+  }
 
 }

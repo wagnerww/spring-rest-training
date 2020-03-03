@@ -2,15 +2,12 @@ package com.algaworks.algafood.domain.model;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -83,6 +80,10 @@ public class Restaurante {
   @OneToMany(mappedBy = "restaurante")
   private Set<Produto> produtos = new HashSet<>();
 
+  @ManyToMany
+  @JoinTable(name = "restaurante_usuario_responsavel", joinColumns = @JoinColumn(name = "restaurante_id"), inverseJoinColumns = @JoinColumn(name = "usuario_id"))
+  private Set<Usuario> responsaveis = new HashSet<>();
+
   private Boolean ativo = Boolean.TRUE;
 
   private Boolean aberto = Boolean.FALSE;
@@ -102,4 +103,21 @@ public class Restaurante {
   public void fechar() {
     setAberto(false);
   }
+
+  public boolean aceitaFormaPagamento(FormaPagamento formaPagamento) {
+    return getFormasPagamento().contains(formaPagamento);
+  }
+
+  public boolean naoAceitaFormaPagamento(FormaPagamento formaPagamento) {
+    return !aceitaFormaPagamento(formaPagamento);
+  }
+
+  public boolean removerResponsavel(Usuario usuario) {
+    return getResponsaveis().remove(usuario);
+  }
+
+  public boolean adicionarResponsavel(Usuario usuario) {
+    return getResponsaveis().add(usuario);
+  }
+
 }
