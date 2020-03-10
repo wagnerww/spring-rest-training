@@ -106,22 +106,7 @@ public class RestauranteController {
       throw new NegocioException(e.getMessage(), e);
     }
 
-  }
-
-  @PatchMapping("/{restauranteId}")
-  public ResponseEntity<?> atualizarParcial(@PathVariable Long restauranteId, @RequestBody Map<String, Object> campos,
-      HttpServletRequest request) {
-    Optional<Restaurante> restauranteAtualObj = restauranteRepository.findById(restauranteId);
-
-    if (!restauranteAtualObj.isPresent()) {
-      return ResponseEntity.notFound().build();
-    }
-
-    Restaurante restauranteAtual = restauranteAtualObj.get();
-    merge(campos, restauranteAtual, request);
-
-    return this.atualizar(restauranteId, restauranteAtual);
-  }
+  } 
 
   private void merge(Map<String, Object> dadosOrigem, Restaurante camposDestino, HttpServletRequest request) {
 
