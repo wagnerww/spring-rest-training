@@ -1,0 +1,1 @@
+ALTER TABLE pedido add column data_confirmacao datetime;

@@ -55,6 +55,9 @@ public class Pedido {
   private OffsetDateTime dataEntrega;
 
   @Column
+  private OffsetDateTime dataConfirmacao;
+
+  @Column
   @Enumerated(EnumType.STRING)
   private StatusPedido status;
 
