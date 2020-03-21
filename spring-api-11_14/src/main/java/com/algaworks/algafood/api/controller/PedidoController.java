@@ -5,6 +5,9 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +28,7 @@ import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.model.Pedido;
 import com.algaworks.algafood.domain.model.Usuario;
+import com.algaworks.algafood.domain.repository.filter.PedidoFilter;
 import com.algaworks.algafood.domain.service.CadastroPedidoService;
 import com.algaworks.algafood.domain.service.EmissaoPedidoService;
 
@@ -48,9 +52,16 @@ public class PedidoController {
   EmissaoPedidoService emissaoPedido;
 
   @GetMapping
-  public ResponseEntity<List<PedidoResumoModel>> listar() {
-    return new ResponseEntity<>(pedidoResumoModelAssembler.toCollectionModel(cadastroPedidoService.listar()),
-        HttpStatus.OK);
+  public ResponseEntity<Page<PedidoResumoModel>> pesquisar(PedidoFilter filtro, Pageable pageable) {
+
+    Page<Pedido> pedidosPage = cadastroPedidoService.listar(filtro, pageable);
+
+    List<PedidoResumoModel> pedidosResumoModel = pedidoResumoModelAssembler.toCollectionModel(pedidosPage.getContent());
+
+    Page<PedidoResumoModel> pedidosResumoModelPage = new PageImpl<>(pedidosResumoModel, pageable,
+        pedidosPage.getTotalElements());
+
+    return new ResponseEntity<>(pedidosResumoModelPage, HttpStatus.OK);
   }
 
   @GetMapping("/{pedidoId}")

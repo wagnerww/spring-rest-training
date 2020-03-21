@@ -5,6 +5,10 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -46,8 +50,17 @@ public class CozinhaController {
 
   /* @ResponseStatus(value = HttpStatus.OK) */
   @GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE })
-  public ResponseEntity<List<CozinhaModel>> listar() {
-    return new ResponseEntity<>(cozinhaModelAssmebler.toCollectionModel(cozinhaRepository.findAll()), HttpStatus.OK);
+  public ResponseEntity<Page<CozinhaModel>> listar(@PageableDefault(size = 10) Pageable pageable) {
+    
+    Page<Cozinha> cozinhaspage = cozinhaRepository.findAll(pageable);
+
+ // Converte a paginação da Model para o output em forma de lista 
+    List<CozinhaModel> cozinhasModel = cozinhaModelAssmebler.toCollectionModel(cozinhaspage.getContent());
+
+ // Conversão da lista para Page
+    Page<CozinhaModel> cozinhasModelPage = new PageImpl<>(cozinhasModel, pageable, cozinhaspage.getTotalElements());
+
+    return new ResponseEntity<>(cozinhasModelPage, HttpStatus.OK);
   }
 
   @GetMapping(produces = { MediaType.APPLICATION_XML_VALUE })
