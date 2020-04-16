@@ -26,7 +26,7 @@ public class RestauranteProdutoFotoController {
     var arquivoFoto = Path.of("/Users/wagner.wagner/Documents/uploads_test", nomeArquivo);
 
     try {
-      arquivo.transferTo(arquivoFoto);
+      fotoProdutoInput.getArquivo().transferTo(arquivoFoto);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
